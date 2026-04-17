@@ -18,8 +18,6 @@ A structured, hands-on course covering Keycloak from fundamentals to production-
 
 ## Module 1: Introduction to Keycloak
 
-**Duration:** 20–30 mins
-
 A conceptual overview of Keycloak and why it exists.
 
 ### Topics
@@ -32,8 +30,6 @@ A conceptual overview of Keycloak and why it exists.
 ---
 
 ## Module 2: Setup & Installation
-
-**Duration:** 30–40 mins
 
 Get Keycloak running locally and understand the admin UI.
 
@@ -58,8 +54,6 @@ Get Keycloak running locally and understand the admin UI.
 
 ## Module 3: Authentication Basics
 
-**Duration:** 40–50 mins
-
 Understand how login flows work and how to manage users and roles.
 
 ### Topics
@@ -74,8 +68,6 @@ Understand how login flows work and how to manage users and roles.
 ---
 
 ## Module 4: Authorization & RBAC
-
-**Duration:** Core module
 
 Implement Role-Based Access Control and understand Keycloak token structure.
 
@@ -107,8 +99,6 @@ Implement Role-Based Access Control and understand Keycloak token structure.
 ---
 
 ## Module 5: Integrate with Backend (Spring Boot)
-
-**Duration:** Core module — high demand
 
 Secure Spring Boot REST APIs using Keycloak bearer token validation.
 
@@ -167,8 +157,6 @@ public ResponseEntity<String> adminEndpoint() {
 
 ## Module 6: Frontend Integration
 
-**Duration:** Optional — but powerful
-
 Integrate Keycloak login into an Angular application.
 
 ### Topics
@@ -197,8 +185,6 @@ export class AuthGuard implements CanActivate {
 ---
 
 ## Module 7: Advanced Topics
-
-**Duration:** Varies — differentiator module
 
 Production patterns, token lifecycle management, and troubleshooting.
 
