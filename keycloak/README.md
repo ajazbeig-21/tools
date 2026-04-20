@@ -38,17 +38,17 @@ Get Keycloak running locally and understand the admin UI.
 - **Run Keycloak using Docker**
 
   ```bash
-  docker run -p 8080:8080 \
+    docker run -p 8080:8080 \
     -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
     -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
     quay.io/keycloak/keycloak:latest start-dev
   ```
 
-- **Basic UI walkthrough** — Admin Console navigation, theme, and settings
+- **Basic UI walkthrough** — Navigate the Admin Console to manage realms, users, clients, roles, and identity providers. Explore built-in themes, session management, and event logging.
 - **Core concepts**
-  - **Realms** — Isolated namespaces for users, clients, and config
-  - **Users** — Identities managed within a realm
-  - **Clients** — Applications that delegate auth to Keycloak
+  - **Realms** — The top-level organizational unit in Keycloak. Each realm is a fully isolated environment with its own users, clients, roles, and configuration. Think of it as a tenant — you might have a `dev` realm, a `staging` realm, and a `production` realm, or separate realms for different products.
+  - **Users** — The identities within a realm. Users can be created manually in Keycloak, imported from an LDAP/Active Directory, or registered via social login. Each user has credentials, attributes, and role assignments.
+  - **Clients** — Represent applications that interact with Keycloak for authentication. A client can be a frontend SPA, a mobile app, or a backend service. Clients define redirect URIs, token settings, and which roles they expose.
 
 ---
 
@@ -64,6 +64,43 @@ Understand how login flows work and how to manage users and roles.
   - **Realm roles** — Global across all clients in the realm
   - **Client roles** — Scoped to a specific client/application
 - **Demo: Create users & roles** — Step-by-step through the Admin UI
+
+### Authorization Code Flow
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant App as Your App (Client)
+    participant KC as Keycloak
+    participant API as Backend API
+
+    User->>App: Click "Login"
+    App->>KC: Redirect to /auth?client_id=...&redirect_uri=...
+    KC->>User: Show Login Page
+    User->>KC: Enter credentials
+    KC->>App: Redirect back with Authorization Code
+    App->>KC: POST /token (exchange code for tokens)
+    KC->>App: Access Token + Refresh Token
+    App->>API: Request with Bearer <Access Token>
+    API->>KC: Validate token (via JWKS)
+    KC->>API: Token valid ✓
+    API->>App: Protected resource response
+    App->>User: Display content
+```
+
+### Role Hierarchy
+
+```mermaid
+flowchart TD
+    Realm[🏰 Realm] --> RR[Realm Roles\nglobal across all clients]
+    Realm --> C1[Client A]
+    Realm --> C2[Client B]
+    C1 --> CR1[Client Roles\nscoped to Client A]
+    C2 --> CR2[Client Roles\nscoped to Client B]
+    Realm --> U[Users]
+    U --> RA[Assigned Realm Roles]
+    U --> CA[Assigned Client Roles]
+```
 
 ---
 
