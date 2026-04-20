@@ -1,6 +1,6 @@
 # Keycloak — Complete Guide
 
-A structured, hands-on course covering Keycloak from fundamentals to production-ready integrations.
+A structured, hands-on course covering Keycloak from fundamentals to a complete, production-ready **Angular + Node.js** application with full authentication and Role-Based Access Control (RBAC).
 
 ---
 
@@ -10,8 +10,8 @@ A structured, hands-on course covering Keycloak from fundamentals to production-
 - [Module 2: Setup & Installation](#module-2-setup--installation)
 - [Module 3: Authentication Basics](#module-3-authentication-basics)
 - [Module 4: Authorization & RBAC](#module-4-authorization--rbac)
-- [Module 5: Integrate with Backend (Spring Boot)](#module-5-integrate-with-backend-spring-boot)
-- [Module 6: Frontend Integration](#module-6-frontend-integration)
+- [Module 5: Backend Integration (Node.js + Express)](#module-5-backend-integration-nodejs--express)
+- [Module 6: Frontend Integration (Angular)](#module-6-frontend-integration-angular)
 - [Module 7: Advanced Topics](#module-7-advanced-topics)
 
 ---
@@ -135,88 +135,242 @@ Implement Role-Based Access Control and understand Keycloak token structure.
 
 ---
 
-## Module 5: Integrate with Backend (Spring Boot)
+## Module 5: Backend Integration (Node.js + Express)
 
-Secure Spring Boot REST APIs using Keycloak bearer token validation.
+Build a secure Node.js REST API that validates Keycloak tokens and enforces role-based access control.
 
 > **USP Module** — This is the most in-demand real-world integration pattern.
 
 ### Topics
 
-- **Secure REST APIs** — Configure Spring Security as a resource server
-- **Bearer token validation** — Validate JWTs issued by Keycloak
-- **Role-based API access** — Use `@PreAuthorize` with realm/client roles
+- **Project setup** — Express app with Keycloak middleware
+- **Bearer token validation** — Verify JWTs issued by Keycloak using JWKS
+- **Role-based API access** — Protect routes per role (`admin`, `user`, etc.)
+- **Full app flow** — Angular frontend → Node.js API → Keycloak
 
-### Quick Setup
+### Full-Stack Architecture
 
-**`application.yml`**
-
-```yaml
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/my-realm
+```mermaid
+flowchart LR
+    A[Angular App\nPort 4200] -->|Bearer Token| B[Node.js API\nPort 3000]
+    B -->|Validate JWT via JWKS| C[Keycloak\nPort 8080]
+    C -->|Public Key| B
+    B -->|Protected Data| A
 ```
 
-**Security Config**
+### Install Dependencies
 
-```java
-@Configuration
-@EnableMethodSecurity
-public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/public/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
-        return http.build();
-    }
-}
+```bash
+npm install express keycloak-connect express-session dotenv
 ```
 
-**Role-protected endpoint**
+### `server.js`
 
-```java
-@GetMapping("/admin")
-@PreAuthorize("hasRole('admin')")
-public ResponseEntity<String> adminEndpoint() {
-    return ResponseEntity.ok("Admin access granted");
-}
+```js
+const express = require('express');
+const session = require('express-session');
+const Keycloak = require('keycloak-connect');
+
+const app = express();
+const memoryStore = new session.MemoryStore();
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  store: memoryStore
+}));
+
+const keycloak = new Keycloak({ store: memoryStore }, {
+  realm: 'my-realm',
+  'auth-server-url': 'http://localhost:8080',
+  'ssl-required': 'external',
+  resource: 'node-client',
+  'confidential-port': 0
+});
+
+app.use(keycloak.middleware());
+
+// Public route
+app.get('/api/public', (req, res) => {
+  res.json({ message: 'Public endpoint — no auth required' });
+});
+
+// Authenticated users only
+app.get('/api/profile', keycloak.protect(), (req, res) => {
+  res.json({ message: 'Your profile', user: req.kauth.grant.access_token.content });
+});
+
+// Admin role only
+app.get('/api/admin', keycloak.protect('realm:admin'), (req, res) => {
+  res.json({ message: 'Admin dashboard — restricted access' });
+});
+
+app.listen(3000, () => console.log('API running on http://localhost:3000'));
 ```
+
+### Role-Based Route Summary
+
+| Route | Protection | Required Role |
+|---|---|---|
+| `GET /api/public` | None | — |
+| `GET /api/profile` | Authenticated | Any logged-in user |
+| `GET /api/admin` | Role-checked | `admin` realm role |
 
 ---
 
-## Module 6: Frontend Integration
+## Module 6: Frontend Integration (Angular)
 
-Integrate Keycloak login into an Angular application.
+Build the Angular side of the complete full-stack app — login, token management, role-based route guards, and secure HTTP calls to the Node.js API.
 
 ### Topics
 
-- **Angular login integration** — Using the `keycloak-angular` adapter
-- **Token handling** — Storing and attaching access tokens to HTTP requests
-- **Route protection** — Auth guards to restrict access to authenticated/authorized users
+- **Install & configure `keycloak-angular`** — Initialize Keycloak before the app bootstraps
+- **Token handling** — Automatically attach `Bearer` tokens to outgoing HTTP requests
+- **Route protection** — Auth guards to restrict pages by authentication and role
+- **Role-based UI** — Show/hide UI elements based on user roles
+- **Token refresh** — Handle silent token refresh to keep sessions alive
 
-### Quick Example (Angular Guard)
+### Install Dependencies
+
+```bash
+npm install keycloak-angular keycloak-js
+```
+
+### `app.config.ts` — Initialize Keycloak at startup
 
 ```typescript
-@Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate {
-  constructor(private keycloak: KeycloakService) {}
+import { APP_INITIALIZER, ApplicationConfig } from '@angular/core';
+import { KeycloakService } from 'keycloak-angular';
 
-  canActivate(): boolean {
-    if (!this.keycloak.isLoggedIn()) {
-      this.keycloak.login();
+function initializeKeycloak(keycloak: KeycloakService) {
+  return () =>
+    keycloak.init({
+      config: {
+        url: 'http://localhost:8080',
+        realm: 'my-realm',
+        clientId: 'angular-client'
+      },
+      initOptions: {
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html'
+      }
+    });
+}
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    KeycloakService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      multi: true,
+      deps: [KeycloakService]
+    }
+  ]
+};
+```
+
+### Auth Guard (route protection)
+
+```typescript
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
+import { KeycloakAuthGuard, KeycloakService } from 'keycloak-angular';
+
+@Injectable({ providedIn: 'root' })
+export class AuthGuard extends KeycloakAuthGuard {
+  constructor(router: Router, keycloak: KeycloakService) {
+    super(router, keycloak);
+  }
+
+  async isAccessAllowed(route: ActivatedRouteSnapshot): Promise<boolean> {
+    if (!this.authenticated) {
+      await this.keycloakAngular.login();
       return false;
     }
-    return true;
+
+    const requiredRoles: string[] = route.data['roles'] ?? [];
+    return requiredRoles.every(role => this.roles.includes(role));
   }
 }
+```
+
+### Route Config with Role-Based Guards
+
+```typescript
+export const routes: Routes = [
+  { path: '', component: HomeComponent },
+  {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['admin'] }   // only users with 'admin' role
+  }
+];
+```
+
+### HTTP Interceptor — Auto-attach Bearer Token
+
+```typescript
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { KeycloakService } from 'keycloak-angular';
+
+export const authInterceptor: HttpInterceptorFn = async (req, next) => {
+  const keycloak = inject(KeycloakService);
+  const token = await keycloak.getToken();
+
+  const authReq = req.clone({
+    setHeaders: { Authorization: `Bearer ${token}` }
+  });
+  return next(authReq);
+};
+```
+
+### Role-Based UI Elements
+
+```typescript
+// In any component
+export class NavComponent {
+  isAdmin = false;
+
+  constructor(private keycloak: KeycloakService) {
+    this.isAdmin = this.keycloak.isUserInRole('admin');
+  }
+}
+```
+
+```html
+<nav>
+  <a routerLink="/profile">Profile</a>
+  <a routerLink="/admin" *ngIf="isAdmin">Admin Panel</a>
+  <button (click)="keycloak.logout()">Logout</button>
+</nav>
+```
+
+### Full-Stack Request Flow
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant NG as Angular App
+    participant KC as Keycloak
+    participant API as Node.js API
+
+    User->>NG: Visit protected route
+    NG->>KC: Redirect to login (if not authenticated)
+    KC->>NG: Return Access Token
+    NG->>API: GET /api/admin (Bearer Token)
+    API->>KC: Validate token + check roles
+    KC->>API: Valid, role = admin
+    API->>NG: 200 OK — admin data
+    NG->>User: Render Admin Dashboard
 ```
 
 ---
