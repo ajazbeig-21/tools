@@ -1,10 +1,18 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 const session = require('express-session');
 const Keycloak = require('keycloak-connect');
 
 const app = express();
+
+// Allow Angular dev server to call this API
+app.use(cors({
+  origin: 'http://localhost:4200',
+  allowedHeaders: ['Authorization', 'Content-Type']
+}));
+
 const memoryStore = new session.MemoryStore();
 
 app.use(session({
@@ -15,7 +23,7 @@ app.use(session({
 }));
 
 const keycloak = new Keycloak({ store: memoryStore }, {
-  realm: 'my-realm',
+  realm: 'demo-realm',
   'auth-server-url': 'http://localhost:8080',
   'ssl-required': 'external',
   resource: 'node-client',
