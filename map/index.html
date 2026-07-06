@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+<link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
   <title>My Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -12,9 +14,13 @@
 <script>
   var map = L.map('map').setView([18.5204, 73.8567], 10); // Pune
 
-  L.tileLayer('http://localhost:8080/styles/osm-bright/{z}/{x}/{y}.png', {
+ L.tileLayer(
+  'http://192.168.176.1:8080/styles/basic-preview/{z}/{x}/{y}.png',
+  {
+    attribution: 'Tileserver',
     maxZoom: 14
-  }).addTo(map);
+  }
+).addTo(map);
 
   L.marker([18.5204, 73.8567]).addTo(map)
     .bindPopup('Pune')
