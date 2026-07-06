@@ -1,43 +1,30 @@
-Here's a clean and focused `README.md` tailored for your **3-hour project**.
-
 # 🚀 Production-Ready Microservices with KrakenD API Gateway, FastAPI & Docker
 
 Build a production-style microservices application using **FastAPI**, **KrakenD API Gateway**, and **Docker Compose**.
 
-This project demonstrates how multiple backend services can be exposed through a single API Gateway with routing, request aggregation, authentication, and other essential production features.
+This repository accompanies a **3-hour hands-on course** where you'll learn how to build multiple microservices, expose them through a single API Gateway, and deploy the complete stack using Docker.
 
-> **Course Duration:** 3 Hours
-> **Level:** Beginner to Intermediate
-
----
-
-# 📖 Course Overview
-
-In this hands-on project, you'll build three independent FastAPI microservices, containerize them with Docker, and expose them through a KrakenD API Gateway.
-
-By the end of the course, you'll understand how API Gateways work in real-world applications and how to deploy a complete microservices stack locally using Docker Compose.
+Unlike theory-heavy courses, this project focuses on **building a real working application** while learning the core features of KrakenD used in production. KrakenD is commonly used for routing, request aggregation, authentication, and traffic management in microservices architectures.
 
 ---
 
-# 🎯 What You'll Learn
+## 📂 Repository
 
-* Understand Microservices Architecture
-* Build multiple FastAPI services
-* Dockerize Python applications
-* Configure Docker Compose
-* Install and configure KrakenD
-* Route requests through an API Gateway
-* Aggregate responses from multiple services
-* Implement JWT Authentication
-* Configure CORS
-* Apply Rate Limiting
-* Forward Custom Headers
-* Manage Environment Variables
-* Build a production-ready project structure
+**GitHub Repository**
+
+[Production-Ready Microservices with KrakenD, FastAPI & Docker](https://github.com/ajazbeig-21/tools/tree/aj_lin/udemy-krakend?utm_source=chatgpt.com)
 
 ---
 
-# 🏗️ Project Architecture
+# 🎯 What You'll Build
+
+A complete microservices application consisting of:
+
+* 👤 User Service
+* 📦 Product Service
+* 🛒 Order Service
+* 🚪 KrakenD API Gateway
+* 🐳 Docker Compose Deployment
 
 ```text
                     Client
@@ -55,31 +42,54 @@ By the end of the course, you'll understand how API Gateways work in real-world 
 
 ---
 
+# 📚 What You'll Learn
+
+By the end of this course, you'll be able to:
+
+* Understand Microservices Architecture
+* Build REST APIs with FastAPI
+* Create multiple independent microservices
+* Dockerize Python applications
+* Configure Docker Compose
+* Configure KrakenD API Gateway
+* Route requests to backend services
+* Aggregate responses from multiple APIs
+* Pass Query Parameters & Path Parameters
+* Forward Custom Headers
+* Protect APIs using JWT Authentication
+* Configure CORS
+* Apply Rate Limiting
+* Use Environment Variables
+* Configure Health Checks
+* Organize a production-ready project structure
+
+---
+
+# 🛠 Tech Stack
+
+* FastAPI
+* KrakenD Community Edition
+* Docker
+* Docker Compose
+* Python 3.12+
+* JWT Authentication
+
+---
+
 # 📂 Project Structure
 
 ```text
-production-ready-microservices/
-│
+udemy-krakend/
+
 ├── gateway/
 │   ├── krakend.json
 │   ├── Dockerfile
-│   └── settings/
+│   └── config/
 │
 ├── services/
 │   ├── user-service/
-│   │   ├── app.py
-│   │   ├── Dockerfile
-│   │   └── requirements.txt
-│   │
 │   ├── product-service/
-│   │   ├── app.py
-│   │   ├── Dockerfile
-│   │   └── requirements.txt
-│   │
 │   └── order-service/
-│       ├── app.py
-│       ├── Dockerfile
-│       └── requirements.txt
 │
 ├── docker-compose.yml
 ├── .env
@@ -88,150 +98,71 @@ production-ready-microservices/
 
 ---
 
-# 🛠️ Tech Stack
+# 🚀 Course Curriculum
 
-* FastAPI
-* KrakenD API Gateway
-* Docker
-* Docker Compose
-* Python 3.12+
-* JWT Authentication
+## Section 1 — Introduction
+
+* Course Overview
+* What are Microservices?
+* What is an API Gateway?
+* Understanding KrakenD
+* Project Architecture
 
 ---
 
-# 🚀 Features
-
-## Microservices
+## Section 2 — Building Backend Services
 
 * User Service
 * Product Service
 * Order Service
+* Testing APIs
+* Dockerizing Services
+* Docker Compose Setup
 
-## API Gateway
+---
 
-* Request Routing
-* Endpoint Aggregation
-* Header Forwarding
-* Centralized API Access
+## Section 3 — KrakenD Fundamentals
 
-## Security
+* Installing KrakenD
+* Understanding `krakend.json`
+* Creating Your First Endpoint
+* Backend Configuration
+* Testing Through KrakenD
+
+---
+
+## Section 4 — Routing & Aggregation
+
+* Basic Routing
+* Path Parameters
+* Query Parameters
+* Request Aggregation
+* Endpoint Aliasing
+* Response Transformation
+
+---
+
+## Section 5 — Authentication & Security
 
 * JWT Authentication
 * CORS Configuration
-* Rate Limiting
-
-## Deployment
-
-* Dockerized Services
-* Docker Compose
-* Environment Variables
-* Health Checks
-
----
-
-# 🌐 API Endpoints
-
-## User Service
-
-```http
-GET /users
-GET /users/{id}
-```
-
-## Product Service
-
-```http
-GET /products
-GET /products/{id}
-```
-
-## Order Service
-
-```http
-GET /orders
-GET /orders/{id}
-```
-
-## Aggregated Endpoint
-
-```http
-GET /dashboard
-```
-
-Returns data from multiple services through KrakenD.
-
----
-
-# 🐳 Getting Started
-
-## Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/production-ready-microservices.git
-
-cd production-ready-microservices
-```
-
-## Start the Project
-
-```bash
-docker compose up --build
-```
-
-## Stop the Project
-
-```bash
-docker compose down
-```
-
----
-
-# 📍 Service URLs
-
-| Service         | URL                                            |
-| --------------- | ---------------------------------------------- |
-| KrakenD Gateway | [http://localhost:8080](http://localhost:8080) |
-| User Service    | [http://localhost:8001](http://localhost:8001) |
-| Product Service | [http://localhost:8002](http://localhost:8002) |
-| Order Service   | [http://localhost:8003](http://localhost:8003) |
-
----
-
-# 📚 Course Curriculum
-
-### Section 1 – Introduction
-
-* What are Microservices?
-* What is an API Gateway?
-* Project Architecture
-
-### Section 2 – Building FastAPI Services
-
-* User Service
-* Product Service
-* Order Service
-
-### Section 3 – Docker
-
-* Dockerfiles
-* Docker Compose
-* Running Multiple Services
-
-### Section 4 – KrakenD API Gateway
-
-* Basic Routing
-* Request Aggregation
 * Header Forwarding
-* JWT Authentication
-
-### Section 5 – Production Features
-
+* Header Injection
 * Environment Variables
-* CORS
+
+---
+
+## Section 6 — Production Features
+
 * Rate Limiting
 * Health Checks
+* Logging
+* Error Handling
+* Docker Best Practices
 
-### Section 6 – Final Deployment
+---
+
+## Section 7 — Final Deployment
 
 * Running the Complete Stack
 * Testing APIs
@@ -239,20 +170,99 @@ docker compose down
 
 ---
 
-# 🎓 Prerequisites
+# ✨ Features
 
-* Basic Python knowledge
-* Basic REST API understanding
-* Docker installed
-* Code editor (VS Code recommended)
+### FastAPI
+
+* REST APIs
+* Swagger Documentation
+* Modular Project Structure
+
+### KrakenD
+
+* API Routing
+* Request Aggregation
+* Backend Routing
+* Header Manipulation
+* JWT Authentication
+* Response Transformation
+* Rate Limiting
+* CORS
+
+### Docker
+
+* Multi-container Deployment
+* Docker Networking
+* Environment Variables
+* Production-ready Docker Compose
 
 ---
 
-# 🤝 Contributing
+# 🌐 Services
 
-Contributions, suggestions, and improvements are always welcome.
+| Service         | Port |
+| --------------- | ---- |
+| KrakenD Gateway | 8080 |
+| User Service    | 8001 |
+| Product Service | 8002 |
+| Order Service   | 8003 |
 
-If you find this project useful, consider giving it a ⭐ on GitHub.
+---
+
+# 🚀 Getting Started
+
+Clone the repository:
+
+```bash
+git clone -b aj_lin https://github.com/ajazbeig-21/tools.git
+
+cd tools/udemy-krakend
+```
+
+Start all services:
+
+```bash
+docker compose up --build
+```
+
+Run in background:
+
+```bash
+docker compose up -d
+```
+
+Stop all services:
+
+```bash
+docker compose down
+```
+
+---
+
+# 🎓 Prerequisites
+
+* Basic Python knowledge
+* REST API fundamentals
+* Docker installed
+* VS Code (recommended)
+
+---
+
+# 👨‍💻 Who This Course Is For
+
+* Python Developers
+* Backend Developers
+* FastAPI Developers
+* DevOps Beginners
+* Software Engineers
+* Students learning Microservices
+* Anyone interested in API Gateway architecture
+
+---
+
+# ⭐ Support
+
+If this repository helps you learn KrakenD or FastAPI, consider giving it a **⭐ Star** on GitHub.
 
 ---
 
@@ -266,5 +276,4 @@ This project is licensed under the MIT License.
 
 **Ajaz Beig**
 
-Helping developers learn FastAPI, Docker, DevOps, and modern backend architecture through practical, project-based courses.
-
+Creating practical, project-based courses on FastAPI, Docker, DevOps, and modern backend architecture.
