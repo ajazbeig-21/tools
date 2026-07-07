@@ -78,12 +78,14 @@ By the end of this course, you'll be able to:
 
 # 📂 Project Structure
 
+start the KrakenD service using Docker
+docker run -p "8080:8080" -v $PWD:/etc/krakend/ krakend:2.13.7 run -c krakend.json
+
 ```text
 udemy-krakend/
 
 ├── gateway/
 │   ├── krakend.json
-│   ├── Dockerfile
 │   └── config/
 │
 ├── services/

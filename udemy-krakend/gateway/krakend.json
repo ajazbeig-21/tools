@@ -1,0 +1,20 @@
+{
+    "$schema": "https://krakend.io",
+    "version": 3,
+    "endpoints": [
+        {
+            "endpoint": "/users",
+            "method": "GET",
+            "backend": [
+                {
+                    "host": [
+                        "http://localhost:5000"
+                    ],
+                    "url_pattern": "/users",
+                    "is_collection":true,
+                    "mapping":{"collection":"users"}
+                }
+            ]
+        }
+    ]
+}

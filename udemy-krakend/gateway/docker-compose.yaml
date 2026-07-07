@@ -1,0 +1,9 @@
+services:
+  krakend:
+    image: krakend
+    container_name: krakend
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - ./:/etc/krakend/
+    command: [ "run", "-d", "-c", "/etc/krakend/krakend.json" ]
