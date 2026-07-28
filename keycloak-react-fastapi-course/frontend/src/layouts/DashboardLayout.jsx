@@ -1,4 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { AuthProvider } from "../auth/AuthProvider";
+import { useAuth } from "../auth/useAuth";
 
 const navItems = [
   { to: "/", label: "Dashboard", end: true },
@@ -8,7 +10,9 @@ const navItems = [
   { to: "/profile", label: "Profile" },
 ];
 
+
 export default function DashboardLayout() {
+  const { logout } = useAuth();
   return (
     <div className="drawer lg:drawer-open min-h-screen bg-base-200">
       <input id="sidebar" type="checkbox" className="drawer-toggle" />
@@ -76,7 +80,9 @@ export default function DashboardLayout() {
             ))}
 
             <li className="mt-4 border-t border-base-300 pt-4">
-              <button type="button">Logout</button>
+              <button type="button" onClick={logout}>
+                Logout
+              </button>
             </li>
           </ul>
         </aside>
