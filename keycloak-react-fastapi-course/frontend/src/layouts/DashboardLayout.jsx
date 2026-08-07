@@ -1,18 +1,73 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { AuthProvider } from "../auth/AuthProvider";
 import { useAuth } from "../auth/useAuth";
+import { useEffect,useState } from "react";
+import keycloak from "../auth/keycloak"; // adjust the path
 
+
+//Update the list add roles in it
 const navItems = [
-  { to: "/", label: "Dashboard", end: true },
-  { to: "/employees", label: "Employees" },
-  { to: "/reports", label: "Reports" },
-  { to: "/admin", label: "Admin Panel" },
-  { to: "/profile", label: "Profile" },
+  {
+    to: "/",
+    label: "Dashboard",
+    end: true,
+  },
+  {
+    to: "/employees",
+    label: "Employees",
+    roles: ["employee", "manager", "admin"],
+  },
+  {
+    to: "/reports",
+    label: "Reports",
+    roles: ["manager", "admin"],
+  },
+  {
+    to: "/admin",
+    label: "Admin Panel",
+    roles: ["admin"],
+  },
+  {
+    to: "/profile",
+    label: "Profile",
+  },
 ];
-
 
 export default function DashboardLayout() {
   const { logout } = useAuth();
+
+  //Add role getter and setter
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    const loadUserRoles = async () => {
+      try {
+        await keycloak.loadUserInfo();
+
+        const realmRoles =
+          keycloak.tokenParsed?.realm_access?.roles || [];
+
+        setRoles(realmRoles);
+
+        console.log("User Roles:", realmRoles);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadUserRoles();
+  }, []);
+
+  const hasAccess = (item) => {
+    // Public menu
+    if (!item.roles) return true;
+
+    // Check if user has any required role
+    return item.roles.some((role) => roles.includes(role));
+  };
+
+
+
   return (
     <div className="drawer lg:drawer-open min-h-screen bg-base-200">
       <input id="sidebar" type="checkbox" className="drawer-toggle" />
@@ -65,19 +120,30 @@ export default function DashboardLayout() {
           </div>
 
           <ul className="menu p-4 gap-1">
-            {navItems.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  end={item.end}
-                  className={({ isActive }) =>
-                    isActive ? "active font-semibold" : undefined
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
+            {/* Change the filteration logic */}
+            {navItems
+              .filter((item) => {
+                // Public menu
+                if (!item.roles) return true;
+
+                // User has at least one required role
+                return item.roles.some((role) =>
+                  keycloak.hasRealmRole(role)
+                );
+              })
+              .map((item) => (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    end={item.end}
+                    className={({ isActive }) =>
+                      isActive ? "active font-semibold" : undefined
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
 
             <li className="mt-4 border-t border-base-300 pt-4">
               <button type="button" onClick={logout}>
